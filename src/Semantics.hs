@@ -369,12 +369,12 @@ unquote (ListR l)    = ListE $ map unquote l
 unquote t            = error $ "unquoting arbitrary values is a sin: " ++ show t
 
 evalTopLevel :: Exp -> Bindings -> Exp -> MResult String (Bindings, Result)
-evalTopLevel world bindings (ListE (SymE "defun":rest)) = do
-  (name, args, expr) <- extract3 "defun" rest
-  nameText <- castSymE "a `defun` needs to have a symbol as its name" name
-  arguments <- castListE ("the second argument to a `defun` has to " ++
+evalTopLevel world bindings (ListE (SymE "fn":rest)) = do
+  (name, args, expr) <- extract3 "fn" rest
+  nameText <- castSymE "a `fn` needs to have a symbol as its name" name
+  arguments <- castListE ("the second argument to a `fn` has to " ++
                "be an argument list") args
-  textArgs <- mapM (castSymE ("`defun` can only have vanilla symbols " ++
+  textArgs <- mapM (castSymE ("`fn` can only have vanilla symbols " ++
                     "as arguments")) arguments
   return (recursiveDefun nameText bindings textArgs expr, SymbolR name)
     where
