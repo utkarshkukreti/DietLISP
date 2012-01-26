@@ -91,20 +91,22 @@ castListE string _     = EResult string
 castSymE _ (SymE sym) = return sym
 castSymE string _     = EResult string
 
-argsError name n = EResult $ "`" ++ name ++ "` expects only " ++ n ++ " argument" ++
-                   (if name == "one" then "" else "s")
+-- argsError :: String -> Int -> Int -> MResult String Exp
+argsError name e n = EResult $ "`" ++ name ++ "` expects " ++
+                     (if e > n then "only " else "") ++ (show n) ++ " argument" ++
+                     (if n > 1 then "s" else "") ++ "."
 
 extract1 :: String -> [Exp] -> MResult String Exp
-extract1 _ [x]  = return x
-extract1 name _ = argsError name "one"
+extract1 _ [x]    = return x
+extract1 name e   = argsError name (length e) 1
 
 extract2 :: String -> [Exp] ->  MResult String (Exp, Exp)
 extract2 _ [x, y] = return (x, y)
-extract2 name _   = argsError name "two"
+extract2 name e   = argsError name (length e) 2
 
 extract3 :: String -> [Exp] -> MResult String (Exp, Exp, Exp)
 extract3 _ [x, y, z] = return (x, y, z)
-extract3 name _      = argsError name "three"
+extract3 name e      = argsError name (length e) 3
 
 -- Fold OPERANDS (assumed integers) using OPERATION seeding with BEGIN in
 -- context BINDINGS.  Result in UndefinedR in case of operands of
